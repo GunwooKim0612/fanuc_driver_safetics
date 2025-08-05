@@ -3,8 +3,18 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+// Conditional include to support Humble distro use of .h files
+#if __has_include("moveit_ros_control_interface/ControllerHandle.h")
 #include "moveit_ros_control_interface/ControllerHandle.h"
+#else
+#include "moveit_ros_control_interface/ControllerHandle.hpp"
+#endif
+#if __has_include("moveit_simple_controller_manager/follow_joint_trajectory_controller_handle.h")
 #include "moveit_simple_controller_manager/follow_joint_trajectory_controller_handle.h"
+#else
+#include "moveit_simple_controller_manager/follow_joint_trajectory_controller_handle.hpp"
+#endif
+
 #include "pluginlib/class_list_macros.hpp"
 
 namespace moveit_ros_control_interface

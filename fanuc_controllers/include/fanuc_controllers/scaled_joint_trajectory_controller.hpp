@@ -23,6 +23,8 @@ public:
   ScaledJointTrajectoryController() = default;
   ~ScaledJointTrajectoryController() override = default;
 
+  controller_interface::InterfaceConfiguration state_interface_configuration() const override;
+
   controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& state) override;
 
   controller_interface::return_type update(const rclcpp::Time& time, const rclcpp::Duration& period) override;
@@ -33,6 +35,7 @@ public:
   double first_order_lag_filter(const double filter_input);
 
 private:
+  bool last_is_connected_ = false;
   std::atomic<int> time_scale_value_{ 100 };  // Default to 100% (no scaling)
   rclcpp::Time last_scaled_time_;
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr time_scale_subscriber_ = nullptr;

@@ -6,6 +6,7 @@
 #include "fanuc_controllers/scaled_joint_trajectory_controller.hpp"
 
 #include "angles/angles.h"
+#include "fanuc_robot_driver/constants.hpp"
 #include "lifecycle_msgs/msg/state.hpp"
 
 namespace fanuc_controllers
@@ -15,6 +16,15 @@ controller_interface::CallbackReturn ScaledJointTrajectoryController::on_init()
 {
   folag_state_ = time_scale_value_.load();
   return JointTrajectoryController::on_init();
+}
+
+controller_interface::InterfaceConfiguration ScaledJointTrajectoryController::state_interface_configuration() const
+{
+  auto state_interface_config = JointTrajectoryController::state_interface_configuration();
+  using fanuc_robot_driver::kConnectionStatusName;
+  using fanuc_robot_driver::kIsConnectedType;
+  state_interface_config.names.push_back(std::string(kConnectionStatusName) + "/" + kIsConnectedType);
+  return state_interface_config;
 }
 
 controller_interface::CallbackReturn ScaledJointTrajectoryController::on_activate(const rclcpp_lifecycle::State& state)
@@ -32,6 +42,24 @@ controller_interface::CallbackReturn ScaledJointTrajectoryController::on_activat
 controller_interface::return_type ScaledJointTrajectoryController::update(const rclcpp::Time& time,
                                                                           const rclcpp::Duration& period)
 {
+  if (!state_interfaces_.empty() && state_interfaces_.back().get_value() == 0.0)
+  {
+    last_is_connected_ = false;
+    // The robot state indicated that the robot is no longer connected.
+    return controller_interface::return_type::OK;
+  }
+  if (!last_is_connected_)
+  {
+    // The controller should update its reference to use the current state
+    read_state_from_state_interfaces(state_current_);
+    rt_active_goal_.writeFromNonRT(RealtimeGoalHandlePtr());
+    rt_has_pending_goal_ = false;
+    traj_msg_external_point_ptr_.reset();
+    traj_msg_external_point_ptr_.initRT(set_hold_position());
+    // command_joint_names_
+  }
+  last_is_connected_ = true;
+
   folag_h_ = period.seconds();
   if (get_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE)
   {
