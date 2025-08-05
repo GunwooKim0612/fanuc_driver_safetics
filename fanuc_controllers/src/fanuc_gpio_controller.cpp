@@ -40,10 +40,20 @@ void GetAnalogIO(const std::shared_ptr<fanuc_msgs::srv::GetAnalogIO::Request>& r
                  std::string("GetAnalogIO does not support the type: ").append(request->io_type.type).c_str());
     return;
   }
-  const rmi::ReadIOPortPacket::Response rmi_response =
-      getRMIInstance()->readIOPort(request->io_type.type, request->index, 1.0);
-  response->value = std::get<float>(rmi_response.PortValue);
-  response->result = rmi_response.ErrorID;
+  try
+  {
+    const rmi::ReadIOPortPacket::Response rmi_response =
+        getRMIInstance()->readIOPort(request->io_type.type, request->index, 1.0);
+    response->value = std::holds_alternative<float>(rmi_response.PortValue) ?
+                          std::get<float>(rmi_response.PortValue) :
+                          static_cast<float>(std::get<int>(rmi_response.PortValue));
+    response->result = rmi_response.ErrorID;
+  }
+  catch (std::runtime_error& e)
+  {
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
+  }
 }
 
 void GetBoolIO(const std::shared_ptr<fanuc_msgs::srv::GetBoolIO::Request>& request,
@@ -58,50 +68,75 @@ void GetBoolIO(const std::shared_ptr<fanuc_msgs::srv::GetBoolIO::Request>& reque
                  std::string("GetBoolIO does not support the type: ").append(request->io_type.type).c_str());
     return;
   }
-
-  if (request->io_type.type == fanuc_msgs::msg::IOType::DI)
+  try
   {
-    const rmi::ReadDigitalInputPortPacket::Response rmi_response =
-        getRMIInstance()->readDigitalInputPort(request->index, 1.0);
-    response->result = rmi_response.ErrorID;
-    response->value = rmi_response.PortValue;
+    if (request->io_type.type == fanuc_msgs::msg::IOType::DI)
+    {
+      const rmi::ReadDigitalInputPortPacket::Response rmi_response =
+          getRMIInstance()->readDigitalInputPort(request->index, 1.0);
+      response->result = rmi_response.ErrorID;
+      response->value = rmi_response.PortValue;
+    }
+    else
+    {
+      const std::string type = request->io_type.type == fanuc_msgs::msg::IOType::F ? "FLAG" : request->io_type.type;
+      const rmi::ReadIOPortPacket::Response rmi_response = getRMIInstance()->readIOPort(type, request->index, 1.0);
+      response->value = std::holds_alternative<int>(rmi_response.PortValue) ?
+                            std::get<int>(rmi_response.PortValue) :
+                            static_cast<int>(std::get<float>(rmi_response.PortValue));
+      response->result = rmi_response.ErrorID;
+    }
   }
-  else
+  catch (std::runtime_error& e)
   {
-    const std::string type = request->io_type.type == fanuc_msgs::msg::IOType::F ? "FLAG" : request->io_type.type;
-    const rmi::ReadIOPortPacket::Response rmi_response = getRMIInstance()->readIOPort(type, request->index, 1.0);
-    response->value = std::holds_alternative<int>(rmi_response.PortValue) ?
-                          std::get<int>(rmi_response.PortValue) :
-                          static_cast<int>(std::get<float>(rmi_response.PortValue));
-    response->result = rmi_response.ErrorID;
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
   }
 }
 
 void GetNumReg(const std::shared_ptr<fanuc_msgs::srv::GetNumReg::Request>& request,
                const std::shared_ptr<fanuc_msgs::srv::GetNumReg::Response>& response)
 {
-  response->result = 1;
-  rmi::ReadNumericRegisterPacket::Response rmi_response = getRMIInstance()->readNumericRegister(request->index, 1.0);
-  response->value = std::holds_alternative<float>(rmi_response.RegisterValue) ?
-                        std::get<float>(rmi_response.RegisterValue) :
-                        static_cast<float>(std::get<int>(rmi_response.RegisterValue));
-  response->result = rmi_response.ErrorID;
+  try
+  {
+    response->result = 1;
+    rmi::ReadNumericRegisterPacket::Response rmi_response = getRMIInstance()->readNumericRegister(request->index, 1.0);
+    response->value = std::holds_alternative<float>(rmi_response.RegisterValue) ?
+                          std::get<float>(rmi_response.RegisterValue) :
+                          static_cast<float>(std::get<int>(rmi_response.RegisterValue));
+    response->result = rmi_response.ErrorID;
+  }
+  catch (std::runtime_error& e)
+  {
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
+  }
 }
 
 void GetGroupIO(const std::shared_ptr<fanuc_msgs::srv::GetGroupIO::Request>& request,
                 const std::shared_ptr<fanuc_msgs::srv::GetGroupIO::Response>& response)
 {
-  if (request->io_type.type != fanuc_msgs::msg::IOType::GI && request->io_type.type != fanuc_msgs::msg::IOType::GO)
+  try
   {
-    response->result = 1;
-    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController),
-                 std::string("GetGroupIO does not support the type: ").append(request->io_type.type).c_str());
-    return;
+    if (request->io_type.type != fanuc_msgs::msg::IOType::GI && request->io_type.type != fanuc_msgs::msg::IOType::GO)
+    {
+      response->result = 1;
+      RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController),
+                   std::string("GetGroupIO does not support the type: ").append(request->io_type.type).c_str());
+      return;
+    }
+    const rmi::ReadIOPortPacket::Response rmi_response =
+        getRMIInstance()->readIOPort(request->io_type.type, request->index, 1.0);
+    response->value = std::holds_alternative<float>(rmi_response.PortValue) ?
+                          static_cast<uint16_t>(std::get<float>(rmi_response.PortValue)) :
+                          static_cast<uint16_t>(std::get<int>(rmi_response.PortValue));
+    response->result = rmi_response.ErrorID;
   }
-  const rmi::ReadIOPortPacket::Response rmi_response =
-      getRMIInstance()->readIOPort(request->io_type.type, request->index, 1.0);
-  response->value = std::get<float>(rmi_response.PortValue);
-  response->result = rmi_response.ErrorID;
+  catch (std::runtime_error& e)
+  {
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
+  }
 }
 
 void SetAnalogIO(const std::shared_ptr<fanuc_msgs::srv::SetAnalogIO::Request>& request,
@@ -114,9 +149,17 @@ void SetAnalogIO(const std::shared_ptr<fanuc_msgs::srv::SetAnalogIO::Request>& r
                  std::string("SetAnalogIO does not support the type: ").append(request->io_type.type).c_str());
     return;
   }
-  rmi::WriteIOPortPacket::Response rmi_response =
-      getRMIInstance()->writeIOPort(request->index, request->io_type.type, request->value, 1.0);
-  response->result = rmi_response.ErrorID;
+  try
+  {
+    rmi::WriteIOPortPacket::Response rmi_response =
+        getRMIInstance()->writeIOPort(request->index, request->io_type.type, request->value, 1.0);
+    response->result = rmi_response.ErrorID;
+  }
+  catch (std::runtime_error& e)
+  {
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
+  }
 }
 
 void SetBoolIO(const std::shared_ptr<fanuc_msgs::srv::SetBoolIO::Request>& request,
@@ -130,27 +173,42 @@ void SetBoolIO(const std::shared_ptr<fanuc_msgs::srv::SetBoolIO::Request>& reque
                  std::string("SetBoolIO does not support the type: ").append(request->io_type.type).c_str());
     return;
   }
-
-  if (request->io_type.type == fanuc_msgs::msg::IOType::DI)
+  try
   {
-    rmi::WriteDigitalOutputPacket::Response rmi_response =
-        getRMIInstance()->writeDigitalOutputPort(request->index, request->value, 1.0);
-    response->result = rmi_response.ErrorID;
+    if (request->io_type.type == fanuc_msgs::msg::IOType::DI)
+    {
+      rmi::WriteDigitalOutputPacket::Response rmi_response =
+          getRMIInstance()->writeDigitalOutputPort(request->index, request->value, 1.0);
+      response->result = rmi_response.ErrorID;
+    }
+    else
+    {
+      const std::string type = request->io_type.type == fanuc_msgs::msg::IOType::F ? "FLAG" : request->io_type.type;
+      rmi::WriteIOPortPacket::Response rmi_response =
+          getRMIInstance()->writeIOPort(request->index, type, request->value, 1.0);
+      response->result = rmi_response.ErrorID;
+    }
   }
-  else
+  catch (std::runtime_error& e)
   {
-    const std::string type = request->io_type.type == fanuc_msgs::msg::IOType::F ? "FLAG" : request->io_type.type;
-    rmi::WriteIOPortPacket::Response rmi_response =
-        getRMIInstance()->writeIOPort(request->index, type, request->value, 1.0);
-    response->result = rmi_response.ErrorID;
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
   }
 }
 
 void SetGenOverride(const std::shared_ptr<fanuc_msgs::srv::SetGenOverride::Request>& request,
                     const std::shared_ptr<fanuc_msgs::srv::SetGenOverride::Response>& response)
 {
-  rmi::SetSpeedOverridePacket::Response rmi_response = getRMIInstance()->setSpeedOverride(request->value, 1.0);
-  response->result = rmi_response.ErrorID;
+  try
+  {
+    rmi::SetSpeedOverridePacket::Response rmi_response = getRMIInstance()->setSpeedOverride(request->value, 1.0);
+    response->result = rmi_response.ErrorID;
+  }
+  catch (std::runtime_error& e)
+  {
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
+  }
 }
 
 void SetGroupIO(const std::shared_ptr<fanuc_msgs::srv::SetGroupIO::Request>& request,
@@ -163,25 +221,49 @@ void SetGroupIO(const std::shared_ptr<fanuc_msgs::srv::SetGroupIO::Request>& req
                  std::string("SetGroupIO does not support the type: ").append(request->io_type.type).c_str());
     return;
   }
-  rmi::WriteIOPortPacket::Response rmi_response =
-      getRMIInstance()->writeIOPort(request->index, request->io_type.type, request->value, 1.0);
-  response->result = rmi_response.ErrorID;
+  try
+  {
+    rmi::WriteIOPortPacket::Response rmi_response =
+        getRMIInstance()->writeIOPort(request->index, request->io_type.type, request->value, 1.0);
+    response->result = rmi_response.ErrorID;
+  }
+  catch (std::runtime_error& e)
+  {
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
+  }
 }
 
 void SetNumReg(const std::shared_ptr<fanuc_msgs::srv::SetNumReg::Request>& request,
                const std::shared_ptr<fanuc_msgs::srv::SetNumReg::Response>& response)
 {
-  const rmi::WriteNumericRegisterPacket::Response rmi_response =
-      getRMIInstance()->writeNumericRegister(request->index, request->value, 1.0);
-  response->result = rmi_response.ErrorID;
+  try
+  {
+    const rmi::WriteNumericRegisterPacket::Response rmi_response =
+        getRMIInstance()->writeNumericRegister(request->index, request->value, 1.0);
+    response->result = rmi_response.ErrorID;
+  }
+  catch (std::runtime_error& e)
+  {
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
+  }
 }
 
 void SetPayloadID(const std::shared_ptr<fanuc_msgs::srv::SetPayloadID::Request>& request,
                   const std::shared_ptr<fanuc_msgs::srv::SetPayloadID::Response>& response)
 {
-  const rmi::SetPayloadPacket::Response rmi_response =
-      getRMIInstance()->setPayloadSchedule(request->payload_schedule_id, 1.0);
-  response->result = rmi_response.ErrorID;
+  try
+  {
+    const rmi::SetPayloadPacket::Response rmi_response =
+        getRMIInstance()->setPayloadSchedule(request->payload_schedule_id, 1.0);
+    response->result = rmi_response.ErrorID;
+  }
+  catch (std::runtime_error& e)
+  {
+    RCLCPP_ERROR(rclcpp::get_logger(kFRGPIOController), e.what());
+    response->result = 1;
+  }
 }
 
 fanuc_msgs::msg::IOType ToROSMsg(const gpio_config::BoolIOStateType& bool_io_state)
@@ -449,7 +531,7 @@ FanucGPIOController::on_configure(const rclcpp_lifecycle::State& previous_state)
         name << ToString(analog_io_state_i.type) << '/' << analog_io_state_i.start + i;
         state_interface_configuration_.names.push_back(name.str());
         index_analog_io_state_[i + offset] = state_interface_index++;
-        analog_io_state_msg_.values[i + offset].io_type.type = fanuc_msgs::msg::IOType::AI;
+        analog_io_state_msg_.values[i + offset].io_type.type = ToString(analog_io_state_i.type);
         analog_io_state_msg_.values[i + offset].value = 0.0;
         analog_io_state_msg_.values[i + offset].index = analog_io_state_i.start + i;
       }

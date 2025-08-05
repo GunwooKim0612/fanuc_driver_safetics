@@ -494,7 +494,7 @@ WriteIOPortPacket::Response RMIConnection::writeIOPort(const int port_number, co
   WriteIOPortPacket::Request write_io_port_packet;
   write_io_port_packet.PortNumber = port_number;
   write_io_port_packet.PortType = port_type;
-  write_io_port_packet.PortValue = std::get<int>(port_value);
+  write_io_port_packet.PortValue = port_value;
   connection_impl_->write(write_io_port_packet);
   return getResponsePacket<WriteIOPortPacket::Response>(timeout, "Failed to read IO port. ", std::nullopt);
 }

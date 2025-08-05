@@ -306,7 +306,7 @@ hardware_interface::CallbackReturn FanucHardwareInterface::on_init(const hardwar
 
   // Parse and configure cyclic GPIO from the yaml config.
   const auto config_path_it = info_.hardware_parameters.find("gpio_configuration");
-  if (config_path_it != info_.hardware_parameters.end())
+  if (config_path_it != info_.hardware_parameters.end() && !config_path_it->second.empty())
   {
     gpio_config::GPIOConfig gpio_config;
     RCLCPP_INFO_STREAM(rclcpp::get_logger(kFRHWInterface),

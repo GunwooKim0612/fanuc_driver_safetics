@@ -59,6 +59,7 @@ ament_target_dependencies(scaled_joint_trajectory_controller
     std_msgs
     trajectory_msgs
 )
+target_link_libraries(scaled_joint_trajectory_controller fanuc_hardware_interface::fanuc_hardware_interface_constants)
 
 # Build the FANUC GPIO controller controller library
 add_library(fanuc_gpio_controller SHARED
