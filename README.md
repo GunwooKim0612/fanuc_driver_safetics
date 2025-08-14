@@ -44,13 +44,13 @@ Please see the LICENSE folder in the root directory for the full texts of these 
 
 
 
-### Manual CMake build & install (libraries only)
+## Manual CMake build & install (libraries only)
 
 > 이 절차는 ROS 2/colcon 없이 **코어 C++ 라이브러리(`fanuc_libs`)**만 빌드·설치하고,
 > 외부 CMake 프로젝트에서 `find_package(fanuc_libs)`로 사용하는 방법입니다.
 > 전체 드라이버(ROS 2 통합)를 원하시면 위의 문서(Quick Start)를 참고하세요.
 
-#### 0) Prerequisites
+### 0) Prerequisites
 ```bash
 sudo apt update
 sudo apt install -y git git-lfs cmake g++ build-essential
@@ -59,7 +59,7 @@ git lfs install
 # sudo apt install -y libfmt-dev
 ```
 
-#### 1) Get sources
+### 1) Get sources
 ```bash
 git clone --recurse-submodules https://github.com/FANUC-CORPORATION/fanuc_driver.git
 cd fanuc_driver/fanuc_libs
@@ -67,7 +67,7 @@ cd fanuc_driver/fanuc_libs
 > 이 디렉터리는 내부 `dependencies/`를 **FetchContent**로 사용하도록 구성되어 있습니다.  
 > `--recurse-submodules`로 종속 저장소가 함께 내려와야 합니다.
 
-#### 2) Configure & build
+### 2) Configure & build
 ```bash
 cmake -S . -B build \
   -DCMAKE_BUILD_TYPE=Release \
@@ -76,7 +76,7 @@ cmake -S . -B build \
 cmake --build build -j
 ```
 
-#### 3) Install
+### 3) Install
 ```bash
 # 기본: /usr/local 로 설치
 sudo cmake --install build
@@ -88,7 +88,7 @@ sudo cmake --install build
 설치가 끝나면 CMake 패키지 파일이 아래 위치에 생성됩니다.
 - `/usr/local/lib/cmake/fanuc_libs/` (또는 지정한 prefix 경로)
 
-#### 4) Use in your CMake project
+### 4) Use in your CMake project
 소비자 프로젝트의 `CMakeLists.txt` 예시:
 ```cmake
 cmake_minimum_required(VERSION 3.22)
@@ -116,7 +116,7 @@ cmake -S . -B build
 cmake --build build
 ```
 
-#### Troubleshooting
+### Troubleshooting
 - **`fatal error: fmt/format.h: No such file or directory`**
   - `sudo apt install -y libfmt-dev` 설치 후, 소비자 프로젝트에서:
     ```cmake
