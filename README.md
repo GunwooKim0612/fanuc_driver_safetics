@@ -55,8 +55,7 @@ Please see the LICENSE folder in the root directory for the full texts of these 
 sudo apt update
 sudo apt install -y git git-lfs cmake g++ build-essential
 git lfs install
-# (환경에 따라 필요할 수 있음)
-# sudo apt install -y libfmt-dev
+sudo apt install -y libfmt-dev
 ```
 
 ### 1) Get sources
