@@ -22,6 +22,8 @@ import os
 
 def launch_setup(context, *args, **kwargs):
     robot_model = LaunchConfiguration("robot_model")
+    robot_series = LaunchConfiguration("robot_series")
+    moveit_config_name = LaunchConfiguration("moveit_config")
     robot_ip = LaunchConfiguration("robot_ip")
     ros2_control_config = LaunchConfiguration("ros2_control_config")
     gpio_configuration = LaunchConfiguration("gpio_configuration")
@@ -42,7 +44,7 @@ def launch_setup(context, *args, **kwargs):
         ),
         launch_arguments={
             "robot_model": robot_model,
-            "robot_series": "crx",
+            "robot_series": robot_series,
             "robot_ip": robot_ip,
             "gpio_configuration": gpio_configuration,
             "ros2_control_config": ros2_control_config,
@@ -65,7 +67,7 @@ def launch_setup(context, *args, **kwargs):
         ),
         launch_arguments={
             "robot_model": robot_model,
-            "robot_series": "crx",
+            "robot_series": robot_series,
             "gpio_configuration": gpio_configuration,
             "ros2_control_config": ros2_control_config,
             "launch_rviz": "false",
@@ -88,11 +90,12 @@ def launch_setup(context, *args, **kwargs):
 
     moveit_config = (
         MoveItConfigsBuilder(
-            robot_model.perform(context), package_name="fanuc_moveit_config"
+            robot_model.perform(context),
+            package_name=moveit_config_name.perform(context),
         )
         .robot_description(file_path=urdf_full_path, mappings=description_arguments)
         .robot_description_semantic(
-            file_path=f"srdf/{robot_model.perform(context)}.srdf"
+            file_path=f"config/{robot_model.perform(context)}.srdf"
         )
         .trajectory_execution(file_path="config/moveit_controllers.yaml")
         .planning_scene_monitor(
@@ -138,7 +141,14 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "robot_model",
             description="The robot model (required).",
-            choices=["crx5ia", "crx10ia", "crx10ia_l", "crx20ia_l", "crx30ia"],
+        ),
+        DeclareLaunchArgument(
+            "robot_series",
+            description="The robot model (required).",
+        ),
+        DeclareLaunchArgument(
+            "moveit_config",
+            description="The package name for moveit config (required).",
         ),
         DeclareLaunchArgument(
             "robot_ip",
@@ -151,7 +161,7 @@ def generate_launch_description():
                 [
                     FindPackageShare("fanuc_hardware_interface"),
                     "config",
-                    "ros2_controllers.yaml",
+                    "example_ros2_controllers.yaml",
                 ]
             ),
             description="ROS 2 control configuration file the controllers.",
@@ -162,7 +172,7 @@ def generate_launch_description():
                 [
                     FindPackageShare("fanuc_hardware_interface"),
                     "config",
-                    "example_gpio_config.yaml",
+                    "example_gpio_config_small.yaml",
                 ]
             ),
             description="YAML file configuration to specify the GPIO configuration..",

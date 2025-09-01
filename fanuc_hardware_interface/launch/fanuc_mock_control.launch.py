@@ -15,6 +15,7 @@ from launch.substitutions import (
     FindExecutable,
     LaunchConfiguration,
     PathJoinSubstitution,
+    PythonExpression,
 )
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.actions import Node
@@ -23,6 +24,7 @@ from launch_ros.substitutions import FindPackageShare
 
 def launch_setup(context, *args, **kwargs):
     robot_model = LaunchConfiguration("robot_model")
+    robot_series = LaunchConfiguration("robot_series")
     ros2_control_config = LaunchConfiguration("ros2_control_config")
     launch_rviz = LaunchConfiguration("launch_rviz")
 
@@ -33,12 +35,17 @@ def launch_setup(context, *args, **kwargs):
             PathJoinSubstitution(
                 [FindPackageShare("fanuc_hardware_interface"), "robot", ""]
             ),
-            robot_model,
-            ".urdf.xacro",
+            "6dof_robot.urdf.xacro",
             " ",
             "robot_ip:=1.1.1.1",
             " ",
             "use_mock:=true",
+            " ",
+            "robot_series:=",
+            robot_series,
+            " ",
+            "robot_model:=",
+            robot_model,
             " ",
         ]
     )
@@ -65,7 +72,13 @@ def launch_setup(context, *args, **kwargs):
     nodes_to_launch.append(robot_state_pub_node)
 
     rviz_file = PathJoinSubstitution(
-        [FindPackageShare("fanuc_crx_description"), "rviz", "view_crx.rviz"]
+        [
+            FindPackageShare(
+                PythonExpression(['"fanuc_" + "', robot_series, '" + "_description"'])
+            ),
+            "rviz",
+            PythonExpression(['"view_" + "', robot_series, '" + ".rviz"']),
+        ]
     )
     rviz_node = Node(
         package="rviz2",
@@ -117,7 +130,11 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "robot_model",
             description="The robot model (required).",
-            choices=["crx5ia", "crx10ia", "crx10ia_l", "crx20ia_l", "crx30ia"],
+        ),
+        DeclareLaunchArgument(
+            "robot_series",
+            default_value="crx",
+            description='The robot series such as "crx" (required).',
         ),
         DeclareLaunchArgument(
             "ros2_control_config",
