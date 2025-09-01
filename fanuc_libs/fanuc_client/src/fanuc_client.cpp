@@ -87,6 +87,7 @@ FanucClient::FanucClient(std::string robot_ip, const uint16_t stream_motion_port
   , p_queue_impl_(std::make_unique<PQueueImpl>())
 {
   rmi_connection_->connect(5);
+  stream_motion_->sendStopPacket();
   stream_motion::ControllerCapabilityResultPacket controller_capability;
   stream_motion_->getControllerCapability(controller_capability);
   control_period_ = controller_capability.sampling_rate;
