@@ -66,4 +66,8 @@ template std::string ToJSON<JointRelativePacket::Request>(const JointRelativePac
 template std::string ToJSON<LinearRelativePacket::Request>(const LinearRelativePacket::Request&);
 template std::string ToJSON<ConnectROS2Packet::Request>(const ConnectROS2Packet::Request&);
 
+////////////////////////////////////////////////////////////////////
+template std::string ToJSON<GetCartesianPositionPacket::Request>(const GetCartesianPositionPacket::Request&);
+// template std::string ToJSON<CreateASCIIPacket::Request>(const CreateASCIIPacket::Request&);
+////////////////////////////////////////////////////////////////////
 }  // namespace rmi

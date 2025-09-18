@@ -504,7 +504,7 @@ struct GetTCPSpeedPacket
   };
 };
 
-// 2.4.2 Packet To Set User Frame Instruction
+// 2.4.1
 struct WaitForDINPacket
 {
   struct Request
@@ -523,7 +523,7 @@ struct WaitForDINPacket
   };
 };
 
-// 2.4.3 Packet To Set User Tool Instruction
+// 2.4.2 Packet To Set User Tool Instruction
 struct SetUFramePacket
 {
   struct Request
@@ -541,7 +541,7 @@ struct SetUFramePacket
   };
 };
 
-// 2.4.4 Packet To Add Wait Time Instruction
+// 2.4.3 Packet To Set Tool Instruction
 struct SetToolFramePacket
 {
   struct Request

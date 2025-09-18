@@ -150,6 +150,47 @@ public:
   MOCK_METHOD(std::optional<rmi::TimeoutTerminatePacket>, checkTimeoutTerminate, (), (override));
   MOCK_METHOD(std::optional<rmi::CommunicationPacket>, checkCommunicationPacket, (), (override));
   MOCK_METHOD(std::optional<rmi::UnknownPacket>, checkUnknownPacket, (), (override));
+  MOCK_METHOD((rmi::GetCartesianPositionPacket::Response), getCartesianPosition,
+              (const std::optional<uint8_t>&, std::optional<double>), (override));
+  MOCK_METHOD((rmi::GetUFrameToolFramePacket::Response), getUFrameUTool,
+              (const std::optional<uint8_t>&, std::optional<double>), (override));
+  MOCK_METHOD((rmi::SetUFrameToolFramePacket::Response), setUFrameUTool,
+              (int, int, const std::optional<uint8_t>&, std::optional<double>), (override));
+  MOCK_METHOD((rmi::ReadUFrameDataPacket::Response), readUFrameData,
+              (const std::optional<uint8_t>&, std::optional<double>), (override));
+  MOCK_METHOD((rmi::WriteUFrameDataPacket::Response), writeUFrameData,
+              (uint8_t, const rmi::FrameData&, const std::optional<uint8_t>&, std::optional<double>), (override));
+  MOCK_METHOD((rmi::ReadUToolDataPacket::Response), readUToolData,
+              (int, const std::optional<uint8_t>&, std::optional<double>), (override));
+  MOCK_METHOD((rmi::WriteUToolDataPacket::Response), writeUToolData,
+              (uint8_t, const rmi::FrameData&, const std::optional<uint8_t>&, std::optional<double>), (override));
+  MOCK_METHOD((rmi::GetTCPSpeedPacket::Response), getTCPSpeed, (std::optional<double>), (override));
+  MOCK_METHOD((rmi::WaitForDINPacket::Response), waitForDIN, (uint16_t, bool, std::optional<double>), (override));
+  MOCK_METHOD((rmi::SetUFramePacket::Response), setUFrame, (uint8_t, std::optional<double>), (override));
+  MOCK_METHOD((rmi::SetToolFramePacket::Response), setUTool, (uint8_t, std::optional<double>), (override));
+  MOCK_METHOD((rmi::WaitForTimePacket::Response), waitTime, (float, std::optional<double>), (override));
+  MOCK_METHOD((rmi::LinearMotionPacket::Response), linearMotion,
+              (rmi::LinearMotionPacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::LinearRelativePacket::Response), linearRelative,
+              (rmi::LinearRelativePacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::JointMotionPacket::Response), jointMotion, (rmi::JointMotionPacket::Request, std::optional<double>),
+              (override));
+  MOCK_METHOD((rmi::JointRelativePacket::Response), jointRelative,
+              (rmi::JointRelativePacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::CircularMotionPacket::Response), circularMotion,
+              (rmi::CircularMotionPacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::CircularRelativePacket::Response), circularRelative,
+              (rmi::CircularRelativePacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::JointRelativeJRepPacket::Response), jointRelativeJRep,
+              (rmi::JointRelativeJRepPacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::LinearMotionJRepPacket::Response), linearMotionJRep,
+              (rmi::LinearMotionJRepPacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::LinearRelativeJRepPacket::Response), linearRelativeJRep,
+              (rmi::LinearRelativeJRepPacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::SplineMotionPacket::Response), splineMotion,
+              (rmi::SplineMotionPacket::Request, std::optional<double>), (override));
+  MOCK_METHOD((rmi::SplineMotionJRepPacket::Response), splineMotionJRep,
+              (rmi::SplineMotionJRepPacket::Request, std::optional<double>), (override));
 };
 
 using NiceMockStreamMotionConnection = testing::NiceMock<MockStreamMotionConnection>;

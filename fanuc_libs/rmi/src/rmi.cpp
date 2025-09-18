@@ -583,6 +583,213 @@ typename T::Response RMIConnection::sendRMIPacket(typename T::Request& request_p
   return getResponsePacket<typename T::Response>(timeout, "Failed to send packet. ", std::nullopt);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+GetCartesianPositionPacket::Response RMIConnection::getCartesianPosition(const std::optional<uint8_t>& group,
+                                                                         const std::optional<double> timeout)
+{
+  GetCartesianPositionPacket::Request req;
+  req.Group = group;
+  return getResponsePacket<GetCartesianPositionPacket::Response>(timeout, "Failed to read cartesian position. ",
+                                                                 std::nullopt);
+}
+
+GetUFrameToolFramePacket::Response RMIConnection::getUFrameUTool(const std::optional<uint8_t>& group,
+                                                                 const std::optional<double> timeout)
+{
+  GetUFrameToolFramePacket::Request req;
+  req.Group = group;
+  return sendRMIPacket<GetUFrameToolFramePacket>(req, timeout);
+}
+
+SetUFrameToolFramePacket::Response RMIConnection::setUFrameUTool(int uframe, int utool,
+                                                                 const std::optional<uint8_t>& group,
+                                                                 const std::optional<double> timeout)
+{
+  SetUFrameToolFramePacket::Request req;
+  req.UFrameNumber = uframe;
+  req.UToolNumber = utool;
+  req.Group = group;
+  return sendRMIPacket<SetUFrameToolFramePacket>(req, timeout);
+}
+
+ReadUFrameDataPacket::Response RMIConnection::readUFrameData(const std::optional<uint8_t>& group,
+                                                             const std::optional<double> timeout)
+{
+  ReadUFrameDataPacket::Request req;
+  req.Group = group;
+  return sendRMIPacket<ReadUFrameDataPacket>(req, timeout);
+}
+
+WriteUFrameDataPacket::Response RMIConnection::writeUFrameData(uint8_t frame_no, const FrameData& frame,
+                                                               const std::optional<uint8_t>& group,
+                                                               const std::optional<double> timeout)
+{
+  WriteUFrameDataPacket::Request req;
+  req.FrameNumber = frame_no;
+  req.Frame = frame;
+  req.Group = group;
+  return sendRMIPacket<WriteUFrameDataPacket>(req, timeout);
+}
+
+ReadUToolDataPacket::Response RMIConnection::readUToolData(int tool_no, const std::optional<uint8_t>& group,
+                                                           const std::optional<double> timeout)
+{
+  ReadUToolDataPacket::Request req;
+  req.ToolNumber = tool_no;
+  req.Group = group;
+  return sendRMIPacket<ReadUToolDataPacket>(req, timeout);
+}
+
+WriteUToolDataPacket::Response RMIConnection::writeUToolData(uint8_t tool_no, const FrameData& frame,
+                                                             const std::optional<uint8_t>& group,
+                                                             const std::optional<double> timeout)
+{
+  WriteUToolDataPacket::Request req;
+  req.ToolNumber = tool_no;
+  req.Frame = frame;
+  req.Group = group;
+  return sendRMIPacket<WriteUToolDataPacket>(req, timeout);
+}
+
+GetTCPSpeedPacket::Response RMIConnection::getTCPSpeed(const std::optional<double> timeout)
+{
+  GetTCPSpeedPacket::Request req;
+  return sendRMIPacket<GetTCPSpeedPacket>(req, timeout);
+}
+
+WaitForDINPacket::Response RMIConnection::waitForDIN(uint16_t port_number, bool on, const std::optional<double> timeout)
+{
+  WaitForDINPacket::Request req;
+  req.SequenceID = getSequenceNumber();
+  req.PortNumber = port_number;
+  req.PortValue = on ? "ON" : "OFF";
+  return sendRMIPacket<WaitForDINPacket>(req, timeout);
+}
+
+// 2.4.3 Set UFrame (Instruction)
+SetUFramePacket::Response RMIConnection::setUFrame(uint8_t frame_no, const std::optional<double> timeout)
+{
+  SetUFramePacket::Request req;
+  req.SequenceID = getSequenceNumber();
+  req.FrameNumber = frame_no;
+  return sendRMIPacket<SetUFramePacket>(req, timeout);
+}
+
+SetToolFramePacket::Response RMIConnection::setUTool(uint8_t tool_no, const std::optional<double> timeout)
+{
+  SetToolFramePacket::Request req;
+  req.SequenceID = getSequenceNumber();
+  req.ToolNumber = tool_no;
+  return sendRMIPacket<SetToolFramePacket>(req, timeout);
+}
+
+WaitForTimePacket::Response RMIConnection::waitTime(float seconds, const std::optional<double> timeout)
+{
+  WaitForTimePacket::Request req;
+  req.SequenceID = getSequenceNumber();
+  req.Time = seconds;
+  return sendRMIPacket<WaitForTimePacket>(req, timeout);
+}
+
+// 2.4.7 Linear Motion
+LinearMotionPacket::Response RMIConnection::linearMotion(LinearMotionPacket::Request req,
+                                                         const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<LinearMotionPacket>(req, timeout);
+}
+
+// 2.4.8 Linear Relative
+LinearRelativePacket::Response RMIConnection::linearRelative(LinearRelativePacket::Request req,
+                                                             const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<LinearRelativePacket>(req, timeout);
+}
+
+// 2.4.9 Joint Motion
+JointMotionPacket::Response RMIConnection::jointMotion(JointMotionPacket::Request req,
+                                                       const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<JointMotionPacket>(req, timeout);
+}
+
+// 2.4.10 Joint Relative
+JointRelativePacket::Response RMIConnection::jointRelative(JointRelativePacket::Request req,
+                                                           const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<JointRelativePacket>(req, timeout);
+}
+
+// 2.4.11 Circular Motion
+CircularMotionPacket::Response RMIConnection::circularMotion(CircularMotionPacket::Request req,
+                                                             const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<CircularMotionPacket>(req, timeout);
+}
+
+// 2.4.12 Circular Relative
+CircularRelativePacket::Response RMIConnection::circularRelative(CircularRelativePacket::Request req,
+                                                                 const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<CircularRelativePacket>(req, timeout);
+}
+
+// 2.4.14 Joint Relative JRep
+JointRelativeJRepPacket::Response RMIConnection::jointRelativeJRep(JointRelativeJRepPacket::Request req,
+                                                                   const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<JointRelativeJRepPacket>(req, timeout);
+}
+
+// 2.4.15 Linear Motion JRep
+LinearMotionJRepPacket::Response RMIConnection::linearMotionJRep(LinearMotionJRepPacket::Request req,
+                                                                 const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<LinearMotionJRepPacket>(req, timeout);
+}
+
+// 2.4.16 Linear Relative JRep
+LinearRelativeJRepPacket::Response RMIConnection::linearRelativeJRep(LinearRelativeJRepPacket::Request req,
+                                                                     const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<LinearRelativeJRepPacket>(req, timeout);
+}
+
+// 2.4.17 Spline Motion
+SplineMotionPacket::Response RMIConnection::splineMotion(SplineMotionPacket::Request req,
+                                                         const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<SplineMotionPacket>(req, timeout);
+}
+
+// 2.4.18 Spline Motion JRep
+SplineMotionJRepPacket::Response RMIConnection::splineMotionJRep(SplineMotionJRepPacket::Request req,
+                                                                 const std::optional<double> timeout)
+{
+  req.SequenceID = getSequenceNumber();
+  return sendRMIPacket<SplineMotionJRepPacket>(req, timeout);
+}
+
+// 5.3.1 ASCII String Packet (Single Group)
+// CreateASCIIPacket::Response RMIConnection::CreateASCIIP(CreateASCIIPacket::Request req,
+//                                                         const std::optional<double> timeout)
+// {
+//   // Request.ASCI I 는 생성자에서 설정됨(불변 문자열을 유지)
+//   req.SequenceID = getSequenceNumber();
+//   return sendRMIPacket<CreateASCIIPacket>(req, timeout);
+// }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 template SetUFrameToolFramePacket::Response
 RMIConnection::sendRMIPacket<SetUFrameToolFramePacket>(SetUFrameToolFramePacket::Request&, std::optional<double>);
 template ReadUFrameDataPacket::Response
@@ -636,6 +843,14 @@ RMIConnection::sendRMIPacket<SplineMotionJRepPacket>(SplineMotionJRepPacket::Req
 template ConnectROS2Packet::Response RMIConnection::sendRMIPacket<ConnectROS2Packet>(ConnectROS2Packet::Request&,
                                                                                      std::optional<double>);
 template ConnectPacket::Response RMIConnection::sendRMIPacket<ConnectPacket>(ConnectPacket::Request&,
-                                                                                     std::optional<double>);
+                                                                             std::optional<double>);
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template GetCartesianPositionPacket::Response
+RMIConnection::sendRMIPacket<GetCartesianPositionPacket>(GetCartesianPositionPacket::Request&, std::optional<double>);
+template SetSpeedOverridePacket::Response
+RMIConnection::sendRMIPacket<SetSpeedOverridePacket>(SetSpeedOverridePacket::Request&, std::optional<double>);
+// template CreateASCIIPacket::Response
+// RMIConnection::sendRMIPacket<CreateASCIIPacket>(CreateASCIIPacket::Request&, std::optional<double>);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }  // namespace rmi

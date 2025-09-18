@@ -31,8 +31,7 @@ std::optional<T> FromJSON(const std::string& json)
   return valid_result ? std::optional<T>(result.value()) : std::nullopt;
 }
 
-template std::optional<WriteDigitalOutputPacket::Response>
-FromJSON<WriteDigitalOutputPacket::Response>(const std::string&);
+template std::optional<WriteDigitalOutputPacket::Response> FromJSON<WriteDigitalOutputPacket::Response>(const std::string&);
 template std::optional<ConnectPacket::Response> FromJSON<ConnectPacket::Response>(const std::string&);
 template std::optional<DisconnectPacket::Response> FromJSON<DisconnectPacket::Response>(const std::string&);
 template std::optional<InitializePacket::Response> FromJSON<InitializePacket::Response>(const std::string&);
@@ -44,25 +43,18 @@ template std::optional<AbortPacket::Response> FromJSON<AbortPacket::Response>(co
 template std::optional<PausePacket::Response> FromJSON<PausePacket::Response>(const std::string&);
 template std::optional<ContinuePacket::Response> FromJSON<ContinuePacket::Response>(const std::string&);
 template std::optional<ReadErrorPacket::Response> FromJSON<ReadErrorPacket::Response>(const std::string&);
-template std::optional<WritePositionRegisterPacket::Response>
-FromJSON<WritePositionRegisterPacket::Response>(const std::string&);
-template std::optional<ReadPositionRegisterPacket::Response>
-FromJSON<ReadPositionRegisterPacket::Response>(const std::string&);
-template std::optional<ReadDigitalInputPortPacket::Response>
-FromJSON<ReadDigitalInputPortPacket::Response>(const std::string&);
+template std::optional<WritePositionRegisterPacket::Response> FromJSON<WritePositionRegisterPacket::Response>(const std::string&);
+template std::optional<ReadPositionRegisterPacket::Response> FromJSON<ReadPositionRegisterPacket::Response>(const std::string&);
+template std::optional<ReadDigitalInputPortPacket::Response> FromJSON<ReadDigitalInputPortPacket::Response>(const std::string&);
 template std::optional<SetPayloadPacket::Response> FromJSON<SetPayloadPacket::Response>(const std::string&);
-template std::optional<ReadNumericRegisterPacket::Response>
-FromJSON<ReadNumericRegisterPacket::Response>(const std::string&);
-template std::optional<WriteNumericRegisterPacket::Response>
-FromJSON<WriteNumericRegisterPacket::Response>(const std::string&);
+template std::optional<ReadNumericRegisterPacket::Response> FromJSON<ReadNumericRegisterPacket::Response>(const std::string&);
+template std::optional<WriteNumericRegisterPacket::Response> FromJSON<WriteNumericRegisterPacket::Response>(const std::string&);
 template std::optional<ReadIOPortPacket::Response> FromJSON<ReadIOPortPacket::Response>(const std::string&);
 template std::optional<WriteIOPortPacket::Response> FromJSON<WriteIOPortPacket::Response>(const std::string&);
 template std::optional<ReadVariablePacket::Response> FromJSON<ReadVariablePacket::Response>(const std::string&);
 template std::optional<WriteVariablePacket::Response> FromJSON<WriteVariablePacket::Response>(const std::string&);
-template std::optional<GetExtendedStatusPacket::Response>
-FromJSON<GetExtendedStatusPacket::Response>(const std::string&);
-template std::optional<LinearRelativeJRepPacket::Response>
-FromJSON<LinearRelativeJRepPacket::Response>(const std::string&);
+template std::optional<GetExtendedStatusPacket::Response> FromJSON<GetExtendedStatusPacket::Response>(const std::string&);
+template std::optional<LinearRelativeJRepPacket::Response> FromJSON<LinearRelativeJRepPacket::Response>(const std::string&);
 template std::optional<LinearRelativePacket::Response> FromJSON<LinearRelativePacket::Response>(const std::string&);
 template std::optional<ReadJointAnglesPacket::Response> FromJSON<ReadJointAnglesPacket::Response>(const std::string&);
 template std::optional<ReadUFrameDataPacket::Response> FromJSON<ReadUFrameDataPacket::Response>(const std::string&);
@@ -73,8 +65,7 @@ template std::optional<WaitForDINPacket::Response> FromJSON<WaitForDINPacket::Re
 template std::optional<CircularMotionPacket::Response> FromJSON<CircularMotionPacket::Response>(const std::string&);
 template std::optional<SetToolFramePacket::Response> FromJSON<SetToolFramePacket::Response>(const std::string&);
 template std::optional<SetUFramePacket::Response> FromJSON<SetUFramePacket::Response>(const std::string&);
-template std::optional<JointRelativeJRepPacket::Response>
-FromJSON<JointRelativeJRepPacket::Response>(const std::string&);
+template std::optional<JointRelativeJRepPacket::Response> FromJSON<JointRelativeJRepPacket::Response>(const std::string&);
 template std::optional<SplineMotionJRepPacket::Response> FromJSON<SplineMotionJRepPacket::Response>(const std::string&);
 template std::optional<GetTCPSpeedPacket::Response> FromJSON<GetTCPSpeedPacket::Response>(const std::string&);
 template std::optional<WaitForTimePacket::Response> FromJSON<WaitForTimePacket::Response>(const std::string&);
@@ -84,16 +75,19 @@ template std::optional<SplineMotionPacket::Response> FromJSON<SplineMotionPacket
 template std::optional<WriteUToolDataPacket::Response> FromJSON<WriteUToolDataPacket::Response>(const std::string&);
 template std::optional<LinearMotionPacket::Response> FromJSON<LinearMotionPacket::Response>(const std::string&);
 template std::optional<ReadUToolDataPacket::Response> FromJSON<ReadUToolDataPacket::Response>(const std::string&);
-template std::optional<GetUFrameToolFramePacket::Response>
-FromJSON<GetUFrameToolFramePacket::Response>(const std::string&);
+template std::optional<GetUFrameToolFramePacket::Response> FromJSON<GetUFrameToolFramePacket::Response>(const std::string&);
 template std::optional<WriteUFrameDataPacket::Response> FromJSON<WriteUFrameDataPacket::Response>(const std::string&);
-template std::optional<SetUFrameToolFramePacket::Response>
-FromJSON<SetUFrameToolFramePacket::Response>(const std::string&);
+template std::optional<SetUFrameToolFramePacket::Response> FromJSON<SetUFrameToolFramePacket::Response>(const std::string&);
 template std::optional<ConnectROS2Packet::Response> FromJSON<ConnectROS2Packet::Response>(const std::string&);
 
 template std::optional<CommunicationPacket> FromJSON<CommunicationPacket>(const std::string&);
 template std::optional<SystemFaultPacket> FromJSON<SystemFaultPacket>(const std::string&);
 template std::optional<TimeoutTerminatePacket> FromJSON<TimeoutTerminatePacket>(const std::string&);
 template std::optional<UnknownPacket> FromJSON<UnknownPacket>(const std::string&);
+
+///////////////////////////////////////////////////////////////////////////
+template std::optional<GetCartesianPositionPacket::Response> FromJSON<GetCartesianPositionPacket::Response>(const std::string&);
+// template std::optional<CreateASCIIPacket::Response> FromJSON<CreateASCIIPacket::Response>(const std::string&);
+///////////////////////////////////////////////////////////////////////////
 
 }  // namespace rmi
