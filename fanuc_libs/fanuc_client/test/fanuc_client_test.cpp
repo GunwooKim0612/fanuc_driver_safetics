@@ -92,7 +92,8 @@ class MockRMIConnection : public rmi::RMIConnectionInterface
 public:
   ~MockRMIConnection() override = default;
 
-  MOCK_METHOD(rmi::ConnectROS2Packet::Response, connect, (std::optional<double> timeout), (override));
+  MOCK_METHOD(rmi::ConnectPacket::Response, connect, (std::optional<double> timeout), (override));
+  MOCK_METHOD(rmi::ConnectROS2Packet::Response, connect_ros2, (std::optional<double> timeout), (override));
   MOCK_METHOD(rmi::DisconnectPacket::Response, disconnect, (std::optional<double> timeout), (override));
   MOCK_METHOD(rmi::InitializePacket::Response, initializeRemoteMotion, (std::optional<double> timeout), (override));
   MOCK_METHOD(rmi::ProgramCallPacket::Response, programCall,

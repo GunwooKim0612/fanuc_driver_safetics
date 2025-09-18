@@ -19,7 +19,9 @@ class RMIConnectionInterface
 public:
   virtual ~RMIConnectionInterface() = default;
 
-  virtual ConnectROS2Packet::Response connect(std::optional<double> timeout) = 0;
+  virtual ConnectPacket::Response connect(std::optional<double> timeout) = 0;
+
+  virtual ConnectROS2Packet::Response connect_ros2(const std::optional<double> timeout) = 0;
 
   virtual DisconnectPacket::Response disconnect(std::optional<double> timeout) = 0;
 
@@ -107,7 +109,9 @@ public:
 
   RMIConnection& operator=(const RMIConnection&) = delete;
 
-  ConnectROS2Packet::Response connect(std::optional<double> timeout) override;
+  ConnectPacket::Response connect(std::optional<double> timeout) override;
+
+  ConnectROS2Packet::Response connect_ros2(std::optional<double> timeout) override;
 
   DisconnectPacket::Response disconnect(std::optional<double> timeout) override;
 

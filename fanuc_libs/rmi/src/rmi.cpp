@@ -285,10 +285,10 @@ T RMIConnection::getResponsePacket(const std::optional<double> timeout_optional,
     }
   }
 
-  if (packet_response.value().ErrorID != 0)
-  {
-    throw std::runtime_error(error_message_prefix + "Error: " + LookupErrorCode(packet_response.value().ErrorID));
-  }
+  // if (packet_response.value().ErrorID != 0)
+  // {
+  //   throw std::runtime_error(error_message_prefix + "Error: " + LookupErrorCode(packet_response.value().ErrorID));
+  // }
 
   return packet_response.value();
 }
@@ -298,7 +298,17 @@ int32_t RMIConnection::getSequenceNumber()
   return sequence_number_++;
 }
 
-ConnectROS2Packet::Response RMIConnection::connect(const std::optional<double> timeout)
+ConnectPacket::Response RMIConnection::connect(const std::optional<double> timeout)
+{
+  connection_impl_->write(ConnectPacket::Request());
+  auto connect_response =
+      getResponsePacket<ConnectPacket::Response>(timeout, "Failed to connect to RMI server. ", std::nullopt);
+  // Recreate a TCP to the new port number provided by the server
+  connection_impl_->createNewConnection(robot_ip_address_, connect_response.PortNumber);
+  return connect_response;
+}
+
+ConnectROS2Packet::Response RMIConnection::connect_ros2(const std::optional<double> timeout)
 {
   connection_impl_->write(ConnectROS2Packet::Request());
   auto connect_response =
@@ -624,6 +634,8 @@ template SplineMotionPacket::Response RMIConnection::sendRMIPacket<SplineMotionP
 template SplineMotionJRepPacket::Response
 RMIConnection::sendRMIPacket<SplineMotionJRepPacket>(SplineMotionJRepPacket::Request&, std::optional<double>);
 template ConnectROS2Packet::Response RMIConnection::sendRMIPacket<ConnectROS2Packet>(ConnectROS2Packet::Request&,
+                                                                                     std::optional<double>);
+template ConnectPacket::Response RMIConnection::sendRMIPacket<ConnectPacket>(ConnectPacket::Request&,
                                                                                      std::optional<double>);
 
 }  // namespace rmi
