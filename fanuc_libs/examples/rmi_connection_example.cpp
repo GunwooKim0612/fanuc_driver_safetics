@@ -13,7 +13,8 @@
 int main()
 {
   rmi::RMIConnection rmi_connection("192.168.1.100");
-  const rmi::ConnectROS2Packet::Response connect_response = rmi_connection.connect(std::nullopt);
+  const rmi::ConnectPacket::Response connect_response = rmi_connection.connect(std::nullopt);
+  // const rmi::ConnectROS2Packet::Response connect_response = rmi_connection.connect(std::nullopt);
   try
   {
     auto status_response = rmi_connection.getStatus(std::nullopt);

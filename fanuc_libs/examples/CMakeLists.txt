@@ -11,3 +11,6 @@ target_link_libraries(rmi_connection_example PRIVATE rmi)
 
 add_executable(fanuc_client_example fanuc_client_example.cpp)
 target_link_libraries(fanuc_client_example PRIVATE fanuc_client)
+
+add_executable(rmi_command_test rmi_command_test.cpp)
+target_link_libraries(rmi_command_test PRIVATE rmi)

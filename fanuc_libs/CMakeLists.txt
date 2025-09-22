@@ -72,9 +72,10 @@ add_subdirectory(rmi)
 add_subdirectory(fanuc_client)
 add_subdirectory(gpio_config)
 
-if (BUILD_EXAMPLES)
-  add_subdirectory(examples)
-endif ()
+add_subdirectory(examples)
+# if (BUILD_EXAMPLES)
+#   add_subdirectory(examples)
+# endif ()
 
 # Create cmake config and version files
 include(CMakePackageConfigHelpers)
