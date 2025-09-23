@@ -285,10 +285,10 @@ T RMIConnection::getResponsePacket(const std::optional<double> timeout_optional,
     }
   }
 
-  // if (packet_response.value().ErrorID != 0)
-  // {
-  //   throw std::runtime_error(error_message_prefix + "Error: " + LookupErrorCode(packet_response.value().ErrorID));
-  // }
+  if (packet_response.value().ErrorID != 0)
+  {
+    throw std::runtime_error(error_message_prefix + "Error: " + LookupErrorCode(packet_response.value().ErrorID));
+  }
 
   return packet_response.value();
 }
@@ -590,8 +590,7 @@ GetCartesianPositionPacket::Response RMIConnection::getCartesianPosition(const s
 {
   GetCartesianPositionPacket::Request req;
   req.Group = group;
-  return getResponsePacket<GetCartesianPositionPacket::Response>(timeout, "Failed to read cartesian position. ",
-                                                                 std::nullopt);
+  return sendRMIPacket<GetCartesianPositionPacket>(req, timeout);
 }
 
 GetUFrameToolFramePacket::Response RMIConnection::getUFrameUTool(const std::optional<uint8_t>& group,
